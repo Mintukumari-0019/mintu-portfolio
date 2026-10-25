@@ -1,11 +1,11 @@
 // src/components/sections/Projects.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ExternalLink, Github, Sparkles, ArrowUpRight } from 'lucide-react';
+import { ExternalLink, Github, Sparkles, ArrowUpRight, Database } from 'lucide-react';
 
 const GITHUB_PROFILE = 'https://github.com/Mintukumari-0019';
 
-const projects = [
+const DEFAULT_PROJECTS = [
   {
     title: 'KahaniLand',
     subtitle: 'Kids Learning & Storytelling Platform',
@@ -98,8 +98,18 @@ const projects = [
   },
 ];
 
+const fallbackTheme = {
+  gradient: 'from-indigo-600 via-purple-600 to-blue-600',
+  glow: 'group-hover:shadow-indigo-500/20 group-hover:border-indigo-400',
+  badgeBg: 'bg-indigo-50 text-indigo-700 border-indigo-200/80',
+  cardBg: 'bg-gradient-to-br from-white via-indigo-50/25 to-purple-50/20',
+  border: 'border-indigo-100',
+  iconBg: 'bg-indigo-500/10 text-indigo-600',
+};
+
 const ProjectCard = ({ project, index, featured }) => {
-  const { theme } = project;
+  const theme = project.theme && project.theme.gradient ? project.theme : fallbackTheme;
+  const tags = Array.isArray(project.tags) ? project.tags : [];
 
   return (
     <motion.div
@@ -120,7 +130,6 @@ const ProjectCard = ({ project, index, featured }) => {
           featured ? 'lg:w-1/2 aspect-video lg:aspect-auto' : 'aspect-video'
         } bg-gradient-to-br ${theme.gradient} flex items-center justify-center p-6 text-white`}
       >
-        {/* Subtle decorative circles */}
         <div className="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-white/10 blur-xl pointer-events-none" />
         <div className="absolute -bottom-12 -left-12 w-44 h-44 rounded-full bg-black/10 blur-xl pointer-events-none" />
 
@@ -131,7 +140,7 @@ const ProjectCard = ({ project, index, featured }) => {
             </span>
           </div>
           <div className="mt-3 text-xs font-semibold uppercase tracking-wider text-white/90">
-            {project.subtitle}
+            {project.subtitle || 'Web Application'}
           </div>
           {featured && (
             <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/25 backdrop-blur-md text-[11px] font-bold text-white shadow-sm border border-white/30">
@@ -183,7 +192,7 @@ const ProjectCard = ({ project, index, featured }) => {
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mt-5">
-            {project.tags.map((tag) => (
+            {tags.map((tag) => (
               <span
                 key={tag}
                 className={`px-3 py-1 text-xs font-semibold rounded-lg border shadow-xs transition-colors ${theme.badgeBg}`}
@@ -224,8 +233,34 @@ const ProjectCard = ({ project, index, featured }) => {
 };
 
 const Projects = () => {
-  const featured = projects[0];
-  const others = projects.slice(1);
+  const [projectsList, setProjectsList] = useState(DEFAULT_PROJECTS);
+  const [isFromDatabase, setIsFromDatabase] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadProjects = async () => {
+      try {
+        const response = await fetch('/api/projects');
+        if (!response.ok) return;
+        const result = await response.json();
+        if (isMounted && result.success && Array.isArray(result.data) && result.data.length > 0) {
+          setProjectsList(result.data);
+          setIsFromDatabase(true);
+        }
+      } catch (err) {
+        // Fallback silently to DEFAULT_PROJECTS
+        console.info('Backend API offline or unreachable, using default projects:', err.message);
+      }
+    };
+
+    loadProjects();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const featured = projectsList.find((p) => p.featured) || projectsList[0];
+  const others = projectsList.filter((p) => p !== featured);
 
   return (
     <section id="projects" className="py-20 lg:py-28 bg-white section-offset">
@@ -240,22 +275,29 @@ const Projects = () => {
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-100/80 text-xs font-semibold text-indigo-700 uppercase tracking-wider mb-3">
             <Sparkles size={14} className="text-indigo-600" />
             Featured Work
+            {isFromDatabase && (
+              <span className="inline-flex items-center gap-1 ml-1 pl-2 border-l border-indigo-200 text-emerald-600">
+                <Database size={11} /> Live DB
+              </span>
+            )}
           </div>
           <h2 className="heading-lg">Things I've Built</h2>
           <p className="mt-3 text-gray-500 max-w-xl mx-auto text-base">
-            A showcase of web applications, mobile platforms, and full-stack solutions built with modern technologies.
+            A dynamic collection of full-stack, frontend, and mobile projects backed by an Express & SQL database.
           </p>
         </motion.div>
 
         {/* Featured Project */}
-        <div className="mb-8">
-          <ProjectCard project={featured} index={0} featured />
-        </div>
+        {featured && (
+          <div className="mb-8">
+            <ProjectCard project={featured} index={0} featured />
+          </div>
+        )}
 
         {/* Other Projects Grid */}
         <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-2">
           {others.map((project, index) => (
-            <ProjectCard key={project.title} project={project} index={index + 1} featured={false} />
+            <ProjectCard key={project.id || project.title} project={project} index={index + 1} featured={false} />
           ))}
         </div>
       </div>

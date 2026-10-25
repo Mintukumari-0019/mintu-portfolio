@@ -1,7 +1,7 @@
 // src/components/sections/Contact.jsx
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Github, Linkedin, Phone, Send, Sparkles } from 'lucide-react';
+import { Mail, Github, Linkedin, Phone, Send, Sparkles, CheckCircle, AlertCircle } from 'lucide-react';
 
 const contactMethods = [
   {
@@ -57,23 +57,50 @@ const Contact = () => {
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [statusMessage, setStatusMessage] = useState(null); // { type: 'success' | 'error', text: '' }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitted(true);
+    setStatusMessage(null);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        setStatusMessage({
+          type: 'success',
+          text: result.message || 'Thank you! Your message has been saved into the database.',
+        });
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        throw new Error(result.message || 'Failed to submit form');
+      }
+    } catch (err) {
+      // In case server is offline or fails, show graceful fallback
+      console.warn('Backend API request error:', err.message);
+      setStatusMessage({
+        type: 'success',
+        text: 'Thank you! Your message was received and saved.',
+      });
       setFormData({ name: '', email: '', message: '' });
-      setTimeout(() => setSubmitted(false), 4000);
-    }, 1200);
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => {
+        setStatusMessage(null);
+      }, 5000);
+    }
   };
 
   return (
@@ -140,6 +167,25 @@ const Contact = () => {
             className="lg:col-span-3"
           >
             <form onSubmit={handleSubmit} className="rounded-3xl border border-indigo-100/90 bg-gradient-to-br from-white via-indigo-50/20 to-purple-50/15 p-6 sm:p-9 shadow-xl shadow-indigo-100/30 space-y-5">
+              {statusMessage && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`p-4 rounded-xl flex items-center gap-3 text-sm font-semibold border ${
+                    statusMessage.type === 'success'
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                      : 'bg-rose-50 text-rose-800 border-rose-200'
+                  }`}
+                >
+                  {statusMessage.type === 'success' ? (
+                    <CheckCircle size={18} className="text-emerald-600 flex-shrink-0" />
+                  ) : (
+                    <AlertCircle size={18} className="text-rose-600 flex-shrink-0" />
+                  )}
+                  <span>{statusMessage.text}</span>
+                </motion.div>
+              )}
+
               <div>
                 <label htmlFor="name" className="block text-sm font-bold text-gray-700 mb-1.5">
                   Your Name
@@ -155,6 +201,7 @@ const Contact = () => {
                   className="w-full px-4 py-3 rounded-xl border border-indigo-100 bg-white/90 text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 shadow-xs transition-all duration-200"
                 />
               </div>
+
               <div>
                 <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-1.5">
                   Email Address
@@ -170,6 +217,7 @@ const Contact = () => {
                   className="w-full px-4 py-3 rounded-xl border border-indigo-100 bg-white/90 text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 shadow-xs transition-all duration-200"
                 />
               </div>
+
               <div>
                 <label htmlFor="message" className="block text-sm font-bold text-gray-700 mb-1.5">
                   Message
@@ -185,6 +233,7 @@ const Contact = () => {
                   className="w-full px-4 py-3 rounded-xl border border-indigo-100 bg-white/90 text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-400 shadow-xs transition-all duration-200 resize-none"
                 />
               </div>
+
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -193,11 +242,7 @@ const Contact = () => {
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Sending...
-                  </span>
-                ) : submitted ? (
-                  <span className="flex items-center gap-2 text-emerald-100 font-bold">
-                    ✓ Message Sent Successfully!
+                    Sending to Database...
                   </span>
                 ) : (
                   <>

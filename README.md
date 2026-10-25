@@ -1,12 +1,14 @@
-# Mintu's Developer Portfolio 🚀
+# Mintu's Developer Portfolio 🚀 (Full-Stack)
 
-A modern, responsive personal portfolio website built with React, Vite, Tailwind CSS, and Framer Motion. Fully containerized with Docker and ready for deployment.
+A modern, full-stack personal portfolio website with a **React 18 frontend**, **Node.js/Express backend**, and **SQLite/PostgreSQL database**, containerized with **Docker** and version-controlled with **Git & GitHub**.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Full Tech Stack
 
 - **Frontend**: [React 18](https://react.dev/), [Vite](https://vitejs.dev/)
+- **Backend**: [Node.js](https://nodejs.org/), [Express.js](https://expressjs.com/)
+- **Database**: [SQLite](https://www.sqlite.org/) (Zero-setup local SQL) & [PostgreSQL](https://www.postgresql.org/) (via [Sequelize ORM](https://sequelize.org/))
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **Animations & Icons**: [Framer Motion](https://www.framer.com/motion/), [Lucide React](https://lucide.dev/)
 - **Containerization**: [Docker](https://www.docker.com/) & [Nginx](https://nginx.org/)
@@ -14,65 +16,56 @@ A modern, responsive personal portfolio website built with React, Vite, Tailwind
 
 ---
 
-## 📦 Getting Started Locally
+## 🔌 Backend API Endpoints
 
-### Prerequisites
-- Node.js (v18 or higher)
-- npm or yarn
-
-### Installation
-```bash
-# Clone the repository
-git clone https://github.com/<your-username>/myportfolio_mintu.git
-
-# Navigate to project directory
-cd myportfolio_mintu
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-Visit `http://localhost:3000` in your browser.
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/health` | Healthcheck & database connection status |
+| `GET` | `/api/projects` | Fetch all dynamic portfolio projects |
+| `POST` | `/api/projects` | Create a new project in the database |
+| `POST` | `/api/contact` | Save a contact form message to the database |
+| `GET` | `/api/contact` | View all submitted messages (Admin) |
 
 ---
 
-## 🐳 Running with Docker
+## 📦 Running Locally
 
-Run the entire application in an isolated, production-optimized container using Docker and Nginx.
-
-### Using Docker Compose (Recommended)
+### 1. Start the Backend Server (Port 5000)
 ```bash
-# Build and run container in detached mode
+# From project root
+npm run server
+
+# Or with auto-reload during development
+npm run server:dev
+```
+Backend runs at `http://localhost:5000` and automatically connects to SQLite and pre-seeds the portfolio projects table.
+
+### 2. Start the Frontend Client (Port 3000)
+In a separate terminal window:
+```bash
+npm run dev
+```
+Frontend runs at `http://localhost:3000` and automatically proxies `/api` calls to the Express backend.
+
+---
+
+## 🐳 Running Full-Stack with Docker Compose
+
+Run both the frontend (Nginx) and backend (Express + SQLite volume) with a single command:
+
+```bash
+# Build and run all services
 docker-compose up -d --build
 
-# View container logs
+# View logs
 docker-compose logs -f
 
-# Stop container
+# Stop containers
 docker-compose down
 ```
 
-Visit `http://localhost:8080` in your browser.
-
-### Using Plain Docker Commands
-```bash
-# Build the Docker image
-docker build -t mintu-portfolio:latest .
-
-# Run the container mapping host port 8080 to container port 80
-docker run -d -p 8080:80 --name mintu-portfolio mintu-portfolio:latest
-```
-
----
-
-## 🔧 Project Scripts
-
-- `npm run dev` - Starts the local Vite development server at port 3000
-- `npm run build` - Builds production bundle inside `dist/` directory
-- `npm run preview` - Previews the production build locally
+- **Frontend**: `http://localhost:8080`
+- **Backend API**: `http://localhost:5000/api/health`
 
 ---
 
