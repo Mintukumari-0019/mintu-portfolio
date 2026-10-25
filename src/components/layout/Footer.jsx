@@ -1,6 +1,6 @@
 // src/components/layout/Footer.jsx
 import React from 'react';
-import { Github, Linkedin, Mail, ArrowUp } from 'lucide-react';
+import { Github, Linkedin, Mail, ArrowUp, Shield } from 'lucide-react';
 
 const footerLinks = [
   { label: 'Home', href: '#home' },
@@ -17,7 +17,7 @@ const socialLinks = [
   { icon: Mail, href: 'mailto:mkmintukumari.0987@gmail.com', label: 'Email' },
 ];
 
-const Footer = () => {
+const Footer = ({ onOpenAdmin }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -112,6 +112,14 @@ const Footer = () => {
             <a href="#home" className="hover:text-gray-300 transition-colors">
               Back to Home
             </a>
+            <span>•</span>
+            <button
+              onClick={onOpenAdmin}
+              className="hover:text-indigo-400 text-gray-400 transition-colors flex items-center gap-1.5 cursor-pointer hover:underline"
+            >
+              <Shield size={13} />
+              <span>Admin Panel</span>
+            </button>
           </div>
         </div>
       </div>

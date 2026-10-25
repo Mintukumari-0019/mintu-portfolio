@@ -1,10 +1,13 @@
 // src/App.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useSpring } from 'framer-motion';
 
 // Layout
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+
+// Admin Panel
+import AdminPanel from './components/admin/AdminPanel';
 
 // Sections
 import Hero from './components/sections/Hero';
@@ -22,12 +25,45 @@ import Contact from './components/sections/Contact';
 import FinalCTA from './components/sections/FinalCTA';
 
 function App() {
+  const [isAdminView, setIsAdminView] = useState(() => {
+    return window.location.pathname === '/admin' || window.location.hash === '#admin';
+  });
+
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001,
   });
+
+  useEffect(() => {
+    const checkRoute = () => {
+      setIsAdminView(window.location.pathname === '/admin' || window.location.hash === '#admin');
+    };
+
+    window.addEventListener('popstate', checkRoute);
+    window.addEventListener('hashchange', checkRoute);
+    return () => {
+      window.removeEventListener('popstate', checkRoute);
+      window.removeEventListener('hashchange', checkRoute);
+    };
+  }, []);
+
+  const openAdmin = () => {
+    window.history.pushState({}, '', '#admin');
+    setIsAdminView(true);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  const closeAdmin = () => {
+    window.history.pushState({}, '', '/');
+    setIsAdminView(false);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  if (isAdminView) {
+    return <AdminPanel onBack={closeAdmin} />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50/50">
@@ -37,7 +73,7 @@ function App() {
         style={{ scaleX }}
       />
 
-      <Navbar />
+      <Navbar onOpenAdmin={openAdmin} />
       <main>
         <Hero />
         <ProfessionalSnapshot />
@@ -53,7 +89,7 @@ function App() {
         <Contact />
         <FinalCTA />
       </main>
-      <Footer />
+      <Footer onOpenAdmin={openAdmin} />
     </div>
   );
 }

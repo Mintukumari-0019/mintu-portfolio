@@ -84,4 +84,18 @@ router.patch('/:id/read', async (req, res) => {
   }
 });
 
+// DELETE contact message
+router.delete('/:id', async (req, res) => {
+  try {
+    const msg = await Message.findByPk(req.params.id);
+    if (!msg) {
+      return res.status(404).json({ success: false, message: 'Message not found' });
+    }
+    await msg.destroy();
+    res.json({ success: true, message: 'Message deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 export default router;
