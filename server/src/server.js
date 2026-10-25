@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { sequelize } from './models/index.js';
 import { seedDatabase } from './seeders/seed.js';
 
+import authRouter from './routes/auth.js';
 import projectsRouter from './routes/projects.js';
 import contactRouter from './routes/contact.js';
 import healthRouter from './routes/health.js';
@@ -25,6 +26,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // Routes
+app.use('/api/auth', authRouter);
 app.use('/api/health', healthRouter);
 app.use('/api/projects', projectsRouter);
 app.use('/api/contact', contactRouter);
@@ -36,6 +38,7 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     endpoints: {
       health: '/api/health',
+      auth: '/api/auth',
       projects: '/api/projects',
       contact: '/api/contact',
     },
@@ -64,22 +67,26 @@ app.use((err, req, res, next) => {
 async function startServer() {
   try {
     await sequelize.authenticate();
-    console.log(`✅ Database connected successfully (${sequelize.getDialect()})`);
+    console.log(`[DB] Database connected successfully (${sequelize.getDialect()})`);
 
     // Sync database schema
-    await sequelize.sync({ alter: true });
-    console.log('✅ Database synchronized');
+    await sequelize.sync();
+    console.log('[DB] Database synchronized');
 
     // Auto-seed initial projects if empty
     await seedDatabase();
 
     app.listen(PORT, () => {
-      console.log(`🚀 Portfolio backend running on http://localhost:${PORT}`);
+      console.log(`[SERVER] Portfolio backend running on http://localhost:${PORT}`);
     });
   } catch (error) {
-    console.error('❌ Failed to connect to database or start server:', error);
+    console.error('[SERVER ERROR] Failed to connect to database or start server:', error);
     process.exit(1);
   }
 }
 
-startServer();
+export { app, startServer };
+
+if (process.env.NODE_ENV !== 'test') {
+  startServer();
+}

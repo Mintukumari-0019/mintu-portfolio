@@ -32,8 +32,6 @@ import {
   Layers,
 } from 'lucide-react';
 
-const ADMIN_PASSCODE = 'admin123';
-
 const COLOR_THEMES = [
   {
     name: 'Indigo & Purple',
@@ -92,10 +90,17 @@ const REPLY_TEMPLATES = [
 
 const AdminPanel = ({ onBack }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return sessionStorage.getItem('portfolio_admin_auth') === 'true';
+    return Boolean(sessionStorage.getItem('portfolio_admin_token'));
   });
   const [passcode, setPasscode] = useState('');
   const [authError, setAuthError] = useState('');
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+  // Helper to obtain Authorization header for protected admin endpoints
+  const getAuthHeaders = () => {
+    const token = sessionStorage.getItem('portfolio_admin_token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
 
   // Vertical Navigation State: 'messages' | 'projects' | 'guide' | 'system'
   const [activeSection, setActiveSection] = useState('messages');
@@ -127,32 +132,57 @@ const AdminPanel = ({ onBack }) => {
     selectedTheme: 0,
   });
 
-  const handleAuth = (e) => {
+  const handleAuth = async (e) => {
     e.preventDefault();
-    if (passcode === ADMIN_PASSCODE) {
-      sessionStorage.setItem('portfolio_admin_auth', 'true');
-      setIsAuthenticated(true);
-      setAuthError('');
-    } else {
-      setAuthError('Incorrect passcode. Try: admin123');
+    if (!passcode.trim()) return;
+
+    setIsAuthenticating(true);
+    setAuthError('');
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ passcode: passcode.trim() }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success && data.token) {
+        sessionStorage.setItem('portfolio_admin_token', data.token);
+        setIsAuthenticated(true);
+        setPasscode('');
+        setAuthError('');
+      } else {
+        setAuthError(data.message || 'Incorrect passcode. Please try again.');
+      }
+    } catch (err) {
+      console.error('Authentication error:', err);
+      setAuthError('Unable to connect to authentication server. Please check that backend is running.');
+    } finally {
+      setIsAuthenticating(false);
     }
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem('portfolio_admin_auth');
+    sessionStorage.removeItem('portfolio_admin_token');
     setIsAuthenticated(false);
   };
 
   const fetchData = async () => {
     setLoading(true);
     try {
+      const authHeaders = getAuthHeaders();
       const [healthRes, msgRes, projRes] = await Promise.all([
         fetch('/api/health'),
-        fetch('/api/contact'),
+        fetch('/api/contact', { headers: authHeaders }),
         fetch('/api/projects'),
       ]);
 
       if (healthRes.ok) setServerHealth(await healthRes.json());
+      if (msgRes.status === 401) {
+        handleLogout();
+        return;
+      }
       if (msgRes.ok) {
         const msgData = await msgRes.json();
         if (msgData.success) setMessages(msgData.data);
@@ -176,7 +206,14 @@ const AdminPanel = ({ onBack }) => {
 
   const handleMarkAsRead = async (id) => {
     try {
-      const res = await fetch(`/api/contact/${id}/read`, { method: 'PATCH' });
+      const res = await fetch(`/api/contact/${id}/read`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(),
+      });
+      if (res.status === 401) {
+        handleLogout();
+        return;
+      }
       if (res.ok) {
         setMessages((prev) =>
           prev.map((msg) => (msg.id === id ? { ...msg, isRead: true } : msg))
@@ -190,7 +227,14 @@ const AdminPanel = ({ onBack }) => {
   const handleDeleteMessage = async (id) => {
     if (!window.confirm('Delete this message permanently from database?')) return;
     try {
-      const res = await fetch(`/api/contact/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/contact/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      if (res.status === 401) {
+        handleLogout();
+        return;
+      }
       if (res.ok) {
         setMessages((prev) => prev.filter((msg) => msg.id !== id));
       }
@@ -202,7 +246,14 @@ const AdminPanel = ({ onBack }) => {
   const handleDeleteProject = async (id) => {
     if (!window.confirm('Delete this project from database?')) return;
     try {
-      const res = await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/projects/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      if (res.status === 401) {
+        handleLogout();
+        return;
+      }
       if (res.ok) {
         setProjects((prev) => prev.filter((p) => p.id !== id));
       }
@@ -238,12 +289,20 @@ const AdminPanel = ({ onBack }) => {
     try {
       const res = await fetch(`/api/contact/${replyTargetMessage.id}/reply`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
+        },
         body: JSON.stringify({
           subject: replySubject,
           replyText: replyText,
         }),
       });
+
+      if (res.status === 401) {
+        handleLogout();
+        return;
+      }
 
       const result = await res.json();
       if (res.ok && result.success) {
@@ -323,9 +382,17 @@ const AdminPanel = ({ onBack }) => {
 
       const res = await fetch('/api/projects', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
+        },
         body: JSON.stringify(payload),
       });
+
+      if (res.status === 401) {
+        handleLogout();
+        return;
+      }
 
       if (res.ok) {
         setIsAddProjectOpen(false);
@@ -371,11 +438,10 @@ const AdminPanel = ({ onBack }) => {
 
           <form onSubmit={handleAuth} className="space-y-4">
             <div>
-              <div className="flex justify-between items-center mb-1.5">
+              <div className="mb-1.5">
                 <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
                   Passcode
                 </label>
-                <span className="text-[11px] text-indigo-400 font-mono">Default: admin123</span>
               </div>
               <input
                 type="password"
@@ -395,9 +461,10 @@ const AdminPanel = ({ onBack }) => {
 
             <button
               type="submit"
-              className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition-all cursor-pointer"
+              disabled={isAuthenticating}
+              className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition-all cursor-pointer disabled:opacity-50"
             >
-              Unlock Dashboard
+              {isAuthenticating ? 'Authenticating...' : 'Unlock Dashboard'}
             </button>
 
             <button

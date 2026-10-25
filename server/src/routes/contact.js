@@ -2,6 +2,7 @@
 import express from 'express';
 import nodemailer from 'nodemailer';
 import { Message } from '../models/index.js';
+import { requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -51,8 +52,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET all contact messages (Admin / viewing)
-router.get('/', async (req, res) => {
+// GET all contact messages (Admin Only)
+router.get('/', requireAdmin, async (req, res) => {
   try {
     const messages = await Message.findAll({
       order: [['createdAt', 'DESC']],
@@ -71,8 +72,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-// PATCH mark message as read
-router.patch('/:id/read', async (req, res) => {
+// PATCH mark message as read (Admin Only)
+router.patch('/:id/read', requireAdmin, async (req, res) => {
   try {
     const msg = await Message.findByPk(req.params.id);
     if (!msg) {
@@ -85,8 +86,8 @@ router.patch('/:id/read', async (req, res) => {
   }
 });
 
-// POST reply to a message & record in database
-router.post('/:id/reply', async (req, res) => {
+// POST reply to a message & record in database (Admin Only)
+router.post('/:id/reply', requireAdmin, async (req, res) => {
   try {
     const { replyText, subject } = req.body;
     const msg = await Message.findByPk(req.params.id);
@@ -163,8 +164,8 @@ router.post('/:id/reply', async (req, res) => {
   }
 });
 
-// DELETE contact message
-router.delete('/:id', async (req, res) => {
+// DELETE contact message (Admin Only)
+router.delete('/:id', requireAdmin, async (req, res) => {
   try {
     const msg = await Message.findByPk(req.params.id);
     if (!msg) {

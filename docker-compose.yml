@@ -30,6 +30,8 @@ services:
       - CLIENT_URL=http://localhost:8080
       - DIALECT=sqlite
       - STORAGE_PATH=/app/data/portfolio.sqlite
+      - ADMIN_PASSCODE=${ADMIN_PASSCODE:?ADMIN_PASSCODE environment variable must be set in your .env file}
+      - ADMIN_JWT_SECRET=${ADMIN_JWT_SECRET:?ADMIN_JWT_SECRET environment variable must be set in your .env file}
     volumes:
       - ./server/data:/app/data
     networks:

@@ -1,6 +1,7 @@
 // server/src/routes/projects.js
 import express from 'express';
 import { Project } from '../models/index.js';
+import { requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -48,8 +49,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST new project
-router.post('/', async (req, res) => {
+// POST new project (Admin Only)
+router.post('/', requireAdmin, async (req, res) => {
   try {
     const { title, subtitle, description, tags, demo, github, featured, theme, order } = req.body;
     if (!title || !description || !github) {
@@ -85,8 +86,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT update project
-router.put('/:id', async (req, res) => {
+// PUT update project (Admin Only)
+router.put('/:id', requireAdmin, async (req, res) => {
   try {
     const project = await Project.findByPk(req.params.id);
     if (!project) {
@@ -111,8 +112,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE project
-router.delete('/:id', async (req, res) => {
+// DELETE project (Admin Only)
+router.delete('/:id', requireAdmin, async (req, res) => {
   try {
     const project = await Project.findByPk(req.params.id);
     if (!project) {
