@@ -33,6 +33,18 @@ const Message = sequelize.define('Message', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  isReplied: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  replyText: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  repliedAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 }, {
   timestamps: true,
   tableName: 'messages',

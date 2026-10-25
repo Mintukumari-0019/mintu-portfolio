@@ -67,7 +67,7 @@ async function startServer() {
     console.log(`✅ Database connected successfully (${sequelize.getDialect()})`);
 
     // Sync database schema
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
     console.log('✅ Database synchronized');
 
     // Auto-seed initial projects if empty
