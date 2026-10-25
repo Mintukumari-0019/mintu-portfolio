@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { motion, useScroll, useSpring } from 'framer-motion';
 
 // Layout
@@ -12,12 +12,13 @@ import ProfessionalSnapshot from './components/sections/ProfessionalSnapshot';
 import About from './components/sections/About';
 import Experience from './components/sections/Experience';
 import Projects from './components/sections/Projects';
+import GitHubSection from './components/sections/GitHubSection';
 import Skills from './components/sections/Skills';
 import Journey from './components/sections/Journey';
 import Interests from './components/sections/Interests';
 import Values from './components/sections/Values';
-import Contact from './components/sections/Contact';
 import FAQ from './components/sections/FAQ';
+import Contact from './components/sections/Contact';
 import FinalCTA from './components/sections/FinalCTA';
 
 function App() {
@@ -29,10 +30,10 @@ function App() {
   });
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-slate-50/50">
       {/* Scroll progress bar */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-indigo-600 z-50 origin-left"
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 z-50 origin-left"
         style={{ scaleX }}
       />
 
@@ -43,6 +44,7 @@ function App() {
         <About />
         <Experience />
         <Projects />
+        <GitHubSection />
         <Skills />
         <Journey />
         <Interests />

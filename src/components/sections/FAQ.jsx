@@ -1,33 +1,33 @@
 // src/components/sections/FAQ.jsx
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, HelpCircle, Sparkles } from 'lucide-react';
 
 const faqs = [
   {
-    question: 'What technologies do you work with?',
+    question: 'What technologies and frameworks do you work with?',
     answer:
-      'I primarily work with React, JavaScript, Tailwind CSS, and modern frontend tools. I also have experience with React Native, Node.js, SQL, and MongoDB.',
+      'I specialize in React, JavaScript (ES6+), React Native, and Tailwind CSS on the frontend. On the backend and tooling side, I work with Node.js, Express, REST APIs, MongoDB, SQL, and Docker containerization.',
   },
   {
-    question: 'Are you available for new opportunities?',
+    question: 'Are you available for full-time or contract roles?',
     answer:
-      'Yes, I am currently open to new opportunities, including full-time roles, freelance projects, and collaborations.',
+      'Yes! I am actively open to discussing full-time software developer opportunities, contract positions, and impactful frontend/full-stack projects.',
   },
   {
-    question: 'Can I see your projects?',
+    question: 'Where can I see live demos of your work and projects?',
     answer:
-      'Absolutely! You can explore my featured projects in the Projects section above. I also have more work available on my GitHub profile.',
+      'You can explore my featured projects right in the Projects section above. Every project has GitHub source links and live demos when available, as well as on my GitHub profile.',
   },
   {
-    question: 'Are you open to freelance or collaboration opportunities?',
+    question: 'Can you build both mobile and web applications?',
     answer:
-      'Yes, I am always open to interesting freelance projects, collaborations, and partnerships. Feel free to reach out via the contact form.',
+      'Yes, I build responsive, cross-browser web applications with React & Vite, as well as cross-platform mobile apps with React Native.',
   },
   {
-    question: 'Where can I find your resume?',
+    question: 'Where can I download your resume?',
     answer:
-      'You can download my resume from the About section. If you need any additional information, feel free to contact me directly.',
+      'You can easily view or download my latest resume directly from the About section using the "Download Resume" button, or contact me directly via email.',
   },
 ];
 
@@ -36,25 +36,28 @@ const FAQItem = ({ faq, index }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 15 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
-      className="border-b border-gray-100/80 last:border-0"
+      className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+        isOpen
+          ? 'border-indigo-300 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/30 shadow-lg shadow-indigo-100/30'
+          : 'border-indigo-100/80 bg-white/90 hover:border-indigo-200 hover:shadow-md'
+      }`}
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full py-4 text-left transition-colors hover:text-indigo-600 group"
+        className="flex items-center justify-between w-full p-5 sm:p-6 text-left transition-colors cursor-pointer group"
       >
-        <span className="text-sm font-medium text-gray-800 group-hover:text-indigo-600 transition-colors">
+        <span className={`text-base font-bold transition-colors ${isOpen ? 'text-indigo-600' : 'text-gray-900 group-hover:text-indigo-600'}`}>
           {faq.question}
         </span>
-        <ChevronDown
-          size={18}
-          className={`text-gray-400 transition-transform duration-300 flex-shrink-0 ${
-            isOpen ? 'rotate-180 text-indigo-500' : ''
-          }`}
-        />
+        <div className={`p-2 rounded-xl transition-all duration-300 flex-shrink-0 ml-4 ${
+          isOpen ? 'bg-indigo-600 text-white rotate-180' : 'bg-gray-50 text-gray-400 group-hover:bg-indigo-50 group-hover:text-indigo-600'
+        }`}>
+          <ChevronDown size={18} />
+        </div>
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -65,7 +68,9 @@ const FAQItem = ({ faq, index }) => {
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <p className="pb-4 text-sm text-gray-500 leading-relaxed">{faq.answer}</p>
+            <p className="px-5 sm:px-6 pb-6 text-sm text-gray-600 leading-relaxed border-t border-indigo-100/60 pt-4">
+              {faq.answer}
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -82,15 +87,19 @@ const FAQ = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="mb-12 text-center"
+          className="mb-14 text-center"
         >
-          <span className="inline-block text-sm font-semibold text-indigo-600 uppercase tracking-wider mb-2">
-            FAQ
-          </span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-100/80 text-xs font-semibold text-indigo-700 uppercase tracking-wider mb-3">
+            <Sparkles size={14} className="text-indigo-600" />
+            Common Questions
+          </div>
           <h2 className="heading-lg">Frequently Asked Questions</h2>
+          <p className="mt-3 text-gray-500 max-w-lg mx-auto text-base">
+            Quick answers about my skills, background, tech stack, and availability.
+          </p>
         </motion.div>
 
-        <div className="card-soft p-6 sm:p-8 divide-y divide-gray-100/80">
+        <div className="space-y-4">
           {faqs.map((faq, index) => (
             <FAQItem key={faq.question} faq={faq} index={index} />
           ))}

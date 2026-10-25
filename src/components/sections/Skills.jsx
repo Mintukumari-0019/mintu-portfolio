@@ -129,6 +129,11 @@ const TechIcons = {
       <path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zM15.53 2.16l1.3-1.3c.2-.2.2-.51 0-.71s-.51-.2-.71 0l-1.48 1.48C13.62 1.23 12.83 1 12 1s-1.62.23-2.64.63L7.88.15c-.2-.2-.51-.2-.71 0s-.2.51 0 .71l1.3 1.3C6.73 3.25 5.5 5.2 5.5 7.5h13c0-2.3-1.23-4.25-2.97-5.34zM9 5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm6 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z" />
     </svg>
   ),
+  Docker: () => (
+    <svg viewBox="0 0 24 24" className="w-7 h-7" fill="#0284c7">
+      <path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.186.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.186.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.186.186.186m5.893 2.715h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.185-.186h-2.12a.186.186 0 00-.185.185v1.888c0 .102.084.185.186.185m-2.928 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.185-.186H2.207a.186.186 0 00-.185.185v1.888c0 .102.082.185.185.185M23.99 11.53c-.31-.83-.87-1.42-1.58-1.74-.61-.27-1.29-.32-1.99-.17-.18-.58-.53-1.07-1.01-1.42-.71-.52-1.63-.71-2.58-.54-.08-.34-.23-.66-.44-.93-.41-.53-.99-.89-1.66-1.02-.38-.07-.76-.06-1.14.02V3.39c0-.42-.34-.76-.76-.76H10.84c-.42 0-.76.34-.76.76v.35H7.91c-.42 0-.76.34-.76.76v.35H4.95c-.42 0-.76.34-.76.76v.35H2.02c-.42 0-.76.34-.76.76v5.82c0 .44.04.88.13 1.3.67 3.32 3.51 5.92 7.02 6.47 1.25.2 2.52.14 3.73-.18 2.87-.76 5.17-2.73 6.13-5.26.17-.46.3-.93.38-1.42.59-.14 1.12-.44 1.52-.89.39-.44.62-.99.66-1.58l.16-.39z" />
+    </svg>
+  ),
 };
 
 const allSkills = [
@@ -331,6 +336,16 @@ const allSkills = [
     bgGlow: 'hover:border-purple-300 hover:shadow-purple-100/50',
     featured: false,
   },
+  {
+    name: 'Docker',
+    category: 'tools',
+    categoryLabel: 'Tools',
+    role: 'Containerization',
+    tag: 'DevOps & Deploy',
+    icon: TechIcons.Docker,
+    bgGlow: 'hover:border-cyan-400 hover:shadow-cyan-100/50',
+    featured: true,
+  },
 ];
 
 const categories = [
@@ -347,19 +362,28 @@ const highlights = [
     title: 'Modern Frontend & UI',
     desc: 'Crafting responsive, accessible and interactive user interfaces using React, Tailwind CSS and modern JavaScript.',
     icon: Layers,
-    color: 'from-blue-500/10 to-indigo-500/10 text-indigo-600',
+    theme: {
+      cardBg: 'bg-gradient-to-br from-blue-50/60 via-white to-indigo-50/30 border-blue-100 hover:border-blue-400',
+      iconBg: 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-md shadow-indigo-200',
+    },
   },
   {
     title: 'Full-Stack & REST APIs',
     desc: 'Designing clean server architectures, secure JWT authentication, and structured endpoints with Node.js and Express.',
     icon: Server,
-    color: 'from-emerald-500/10 to-teal-500/10 text-emerald-600',
+    theme: {
+      cardBg: 'bg-gradient-to-br from-emerald-50/60 via-white to-teal-50/30 border-emerald-100 hover:border-emerald-400',
+      iconBg: 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-200',
+    },
   },
   {
     title: 'Cross-Platform Mobile',
     desc: 'Building intuitive Android and mobile experiences with React Native, reusable components, and shared business logic.',
     icon: Smartphone,
-    color: 'from-purple-500/10 to-pink-500/10 text-purple-600',
+    theme: {
+      cardBg: 'bg-gradient-to-br from-purple-50/60 via-white to-pink-50/30 border-purple-100 hover:border-purple-400',
+      iconBg: 'bg-gradient-to-br from-purple-500 to-pink-600 text-white shadow-md shadow-purple-200',
+    },
   },
 ];
 
@@ -473,30 +497,30 @@ const Skills = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3, delay: index * 0.02 }}
-                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                  className={`group bg-white p-5 rounded-2xl border border-gray-100/90 shadow-sm transition-all duration-300 flex flex-col justify-between ${skill.bgGlow}`}
+                  whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                  className={`group relative bg-gradient-to-br from-white via-white to-indigo-50/20 p-5 rounded-2xl border border-indigo-100/80 shadow-xs transition-all duration-300 flex flex-col justify-between hover:shadow-xl hover:shadow-indigo-200/30 hover:border-indigo-300 ${skill.bgGlow}`}
                 >
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <div className="p-2.5 rounded-xl bg-gray-50/90 group-hover:bg-indigo-50/60 transition-colors flex items-center justify-center">
+                      <div className="p-2.5 rounded-xl bg-gray-50/90 group-hover:bg-indigo-100/70 transition-colors flex items-center justify-center">
                         <Icon />
                       </div>
-                      <span className="text-[10px] font-semibold text-gray-400 bg-gray-50 group-hover:bg-indigo-50/70 group-hover:text-indigo-600 px-2 py-0.5 rounded-full transition-colors border border-gray-100/60">
+                      <span className="text-[10px] font-semibold text-gray-500 bg-gray-50 group-hover:bg-indigo-50 group-hover:text-indigo-700 px-2.5 py-0.5 rounded-full transition-colors border border-gray-100">
                         {skill.categoryLabel}
                       </span>
                     </div>
 
-                    <h4 className="font-semibold text-gray-900 text-base tracking-tight group-hover:text-indigo-600 transition-colors">
+                    <h4 className="font-bold text-gray-900 text-base tracking-tight group-hover:text-indigo-600 transition-colors">
                       {skill.name}
                     </h4>
-                    <p className="text-xs text-gray-400 mt-0.5">{skill.role}</p>
+                    <p className="text-xs text-gray-500 mt-0.5 font-medium">{skill.role}</p>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-gray-50 flex items-center justify-between">
-                    <span className="text-[11px] font-medium text-indigo-600 bg-indigo-50/80 px-2 py-0.5 rounded-md">
+                  <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+                    <span className="text-[11px] font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-md">
                       {skill.tag}
                     </span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
                   </div>
                 </motion.div>
               );
@@ -508,6 +532,7 @@ const Skills = () => {
         <div className="mt-14 grid gap-6 md:grid-cols-3">
           {highlights.map((item, index) => {
             const Icon = item.icon;
+            const { theme } = item;
             return (
               <motion.div
                 key={item.title}
@@ -515,13 +540,16 @@ const Skills = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="card-soft p-6 transition-all duration-300 hover:border-indigo-200 hover:shadow-md"
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                className={`p-7 rounded-2xl border ${theme.cardBg} transition-all duration-300 shadow-sm hover:shadow-xl flex flex-col justify-between`}
               >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-4`}>
-                  <Icon size={22} />
+                <div>
+                  <div className={`w-12 h-12 rounded-xl ${theme.iconBg} flex items-center justify-center mb-5`}>
+                    <Icon size={24} />
+                  </div>
+                  <h4 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h4>
+                  <p className="text-sm text-gray-600 leading-relaxed">{item.desc}</p>
                 </div>
-                <h4 className="text-base font-bold text-gray-900">{item.title}</h4>
-                <p className="mt-2 text-sm text-gray-500 leading-relaxed">{item.desc}</p>
               </motion.div>
             );
           })}
