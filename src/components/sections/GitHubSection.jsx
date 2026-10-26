@@ -50,7 +50,7 @@ const repos = [
     },
   },
   {
-    name: 'myportfolio_mintu',
+    name: 'mintu-portfolio',
     description: 'Modern responsive portfolio website built with React, Tailwind CSS, Docker, and Nginx.',
     language: 'React + Docker',
     stars: 3,

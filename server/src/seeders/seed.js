@@ -66,7 +66,7 @@ const initialProjects = [
       'Modern, highly responsive portfolio showcasing full-stack capabilities, dockerized with multi-stage Nginx builds and smooth Framer Motion animations.',
     tags: ['React', 'Tailwind CSS', 'Docker', 'Vite'],
     demo: '#',
-    github: 'https://github.com/Mintukumari-0019',
+    github: 'https://github.com/Mintukumari-0019/mintu-portfolio',
     featured: false,
     order: 4,
     theme: {
