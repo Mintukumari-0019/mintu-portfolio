@@ -51,6 +51,7 @@ const repos = [
   },
   {
     name: 'mintu-portfolio',
+    url: 'https://github.com/Mintukumari-0019/mintu-portfolio',
     description: 'Modern responsive portfolio website built with React, Tailwind CSS, Docker, and Nginx.',
     language: 'React + Docker',
     stars: 3,
@@ -93,7 +94,7 @@ const GitHubSection = () => {
             return (
               <motion.a
                 key={repo.name}
-                href={`https://github.com/Mintukumari-0019/${repo.name}`}
+                href={repo.url || `https://github.com/Mintukumari-0019/${repo.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 initial={{ opacity: 0, y: 20 }}
